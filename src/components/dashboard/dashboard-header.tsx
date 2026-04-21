@@ -42,8 +42,8 @@ export function DashboardHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
-        <Badge variant="outline">{copy.badgeTheme}</Badge>
-        <Button onClick={onToggleTheme} variant="outline" size="sm" type="button">
+        {/* <Badge variant="outline">{copy.badgeTheme}</Badge> */}
+        <Button onClick={onToggleTheme} variant="outline" size="sm" type="button" className="cursor-pointer">
           {theme === "dark" ? (
             <SunMedium data-icon="inline-start" />
           ) : (
@@ -51,8 +51,8 @@ export function DashboardHeader({
           )}
           {theme === "dark" ? "Light" : "Dark"}
         </Button>
-        <Badge variant="outline">{copy.badgeLanguage}</Badge>
-        <Button onClick={onToggleLanguage} variant="outline" size="sm" type="button">
+        {/* <Badge variant="outline">{copy.badgeLanguage}</Badge> */}
+        <Button onClick={onToggleLanguage} variant="outline" size="sm" type="button" className="cursor-pointer">
           <Globe data-icon="inline-start" />
           {copy.langLabel}
         </Button>
