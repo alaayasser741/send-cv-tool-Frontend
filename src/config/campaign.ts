@@ -1,5 +1,7 @@
 export const SEND_ENDPOINT = "http://localhost:5000/send";
 export const SEND_DELAY_MS = 4000;
+export const MIN_DELAY_SECONDS = 0;
+export const MAX_DELAY_SECONDS = 120;
 export const CV_LINK =
   "https://drive.google.com/file/d/1Vn7caRA43llK94r64hXkhU3WAlNDY-Qb/view?usp=drive_link";
 
@@ -39,5 +41,5 @@ export const EMAIL_HTML = `
   <p>Best regards,<br/>
   Alaa Abdullah<br/>
   +20 155 677 4943<br/>
-  <a href="mailto:alaayasser2018@gmail.com">alaayasser2018@gmail.com</a></p>
+  <a href="mailto:alaaabdullah.dev@gmail.com">alaaabdullah.dev@gmail.com</a></p>
 `;

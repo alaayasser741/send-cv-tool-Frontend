@@ -177,3 +177,21 @@
 html[dir="rtl"] .grid-mask {
   transform: scaleX(-1);
 }
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 2px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary) !important;
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-h) !important;
+}

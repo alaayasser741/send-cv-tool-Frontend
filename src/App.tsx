@@ -1,37 +1,51 @@
 import { useMemo } from "react";
 
-import { SEND_DELAY_MS, SEND_ENDPOINT } from "@/config/campaign";
-import { recipients } from "@/data/recipients";
+import { SEND_ENDPOINT } from "@/config/campaign";
 import { useEmailCampaign } from "@/hooks/use-email-campaign";
+import { useLogHistory } from "@/hooks/use-log-history";
 import { usePreferences } from "@/hooks/use-preferences";
+import { useRecipientEditor } from "@/hooks/use-recipient-editor";
 import { messages } from "@/i18n";
-import { clampBatchSize } from "@/lib/campaign";
+import { clampBatchSize, clampDelaySeconds } from "@/lib/campaign";
+import { defaultRecipients } from "@/data/recipients";
 import { AnimatedBackground } from "@/components/dashboard/animated-background";
 import { ControlPanel } from "@/components/dashboard/control-panel";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { StatusPanel } from "@/components/dashboard/status-panel";
 
 export default function App() {
-  const { theme, setTheme, language, setLanguage, batchSize, setBatchSize } =
-    usePreferences();
+  const {
+    theme,
+    setTheme,
+    language,
+    setLanguage,
+    batchSize,
+    setBatchSize,
+    delaySeconds,
+    setDelaySeconds,
+  } = usePreferences();
+  const { recipientInput, setRecipientInput, recipients } = useRecipientEditor({
+    defaultRecipients,
+  });
+  const { logs, prependLogs, clearLogs } = useLogHistory();
 
   const copy = messages[language];
 
   const {
     loading,
     progress,
-    logs,
     completedCount,
     currentBatch,
     totalBatches,
     sendEmails,
   } = useEmailCampaign({
     batchSize,
+    delaySeconds,
     copy,
     recipients,
+    prependLogs,
   });
 
-  const delaySeconds = SEND_DELAY_MS / 1000;
   const statusLabel = loading ? copy.statusSending : copy.statusReady;
 
   const metrics = useMemo(
@@ -40,7 +54,14 @@ export default function App() {
       { label: copy.activeEndpoint, value: SEND_ENDPOINT.replace(/^https?:\/\//, "") },
       { label: copy.delayWindow, value: `${delaySeconds} ${copy.seconds}` },
     ],
-    [copy.activeEndpoint, copy.delayWindow, copy.seconds, copy.totalRecipients, delaySeconds]
+    [
+      copy.activeEndpoint,
+      copy.delayWindow,
+      copy.seconds,
+      copy.totalRecipients,
+      delaySeconds,
+      recipients.length,
+    ]
   );
 
   const toggleTheme = () => {
@@ -53,6 +74,10 @@ export default function App() {
 
   const handleBatchSizeChange = (value: string) => {
     setBatchSize(clampBatchSize(Number(value)));
+  };
+
+  const handleDelaySecondsChange = (value: string) => {
+    setDelaySeconds(clampDelaySeconds(Number(value)));
   };
 
   return (
@@ -80,14 +105,19 @@ export default function App() {
             currentBatch={currentBatch}
             totalBatches={totalBatches}
             logs={logs}
+            onClearHistory={clearLogs}
           />
 
           <ControlPanel
             copy={copy}
             batchSize={batchSize}
+            delaySeconds={delaySeconds}
             loading={loading}
-            totalBatches={totalBatches}
+            recipientsCount={recipients.length}
+            recipientInput={recipientInput}
             onBatchSizeChange={handleBatchSizeChange}
+            onDelaySecondsChange={handleDelaySecondsChange}
+            onRecipientInputChange={setRecipientInput}
             onSend={sendEmails}
           />
         </section>

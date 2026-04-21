@@ -4,4 +4,5 @@ export const COOKIE_KEYS = {
   theme: "send-cv-theme",
   language: "send-cv-language",
   batchSize: "send-cv-batch-size",
+  delaySeconds: "send-cv-delay-seconds",
 } as const;

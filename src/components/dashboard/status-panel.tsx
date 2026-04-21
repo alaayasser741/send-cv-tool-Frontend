@@ -23,6 +23,7 @@ type StatusPanelProps = {
   currentBatch: number;
   totalBatches: number;
   logs: LogItem[];
+  onClearHistory: () => void;
 };
 
 export function StatusPanel({
@@ -35,6 +36,7 @@ export function StatusPanel({
   currentBatch,
   totalBatches,
   logs,
+  onClearHistory,
 }: StatusPanelProps) {
   const completionRatio =
     emailsCount === 0 ? 0 : Math.round((completedCount / emailsCount) * 100);
@@ -100,17 +102,26 @@ export function StatusPanel({
               <p className="text-sm font-medium">{copy.activity}</p>
               <p className="text-sm text-muted-foreground">{copy.activityDescription}</p>
             </div>
-            {loading ? (
-              <Badge variant="secondary">
-                <LoaderCircle className="animate-spin" data-icon="inline-start" />
-                {copy.statusSending}
-              </Badge>
-            ) : (
-              <Badge variant="outline">
-                <CheckCircle2 data-icon="inline-start" />
-                {copy.statusReady}
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              <button
+                className="inline-flex h-8 items-center justify-center rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                onClick={onClearHistory}
+                type="button"
+              >
+                {copy.clearHistory}
+              </button>
+              {loading ? (
+                <Badge variant="secondary">
+                  <LoaderCircle className="animate-spin" data-icon="inline-start" />
+                  {copy.statusSending}
+                </Badge>
+              ) : (
+                <Badge variant="outline">
+                  <CheckCircle2 data-icon="inline-start" />
+                  {copy.statusReady}
+                </Badge>
+              )}
+            </div>
           </div>
 
           <Separator />
@@ -125,14 +136,19 @@ export function StatusPanel({
             <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1">
               {logs.map((log) => (
                 <div
-                  key={`${log.email}-${log.message}`}
+                  key={log.id}
                   className={`rounded-2xl border p-4 text-sm transition-colors ${
                     log.status === "success"
                       ? "border-emerald-500/20 bg-emerald-500/8 text-emerald-700 dark:text-emerald-300"
                       : "border-rose-500/20 bg-rose-500/8 text-rose-700 dark:text-rose-300"
                   }`}
                 >
-                  {log.message}
+                  <div className="flex flex-col gap-1">
+                    <span>{log.message}</span>
+                    <span className="text-xs opacity-70">
+                      {new Date(log.createdAt).toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>

@@ -3,9 +3,11 @@ export type Language = "en" | "ar";
 export type LogStatus = "success" | "error";
 
 export type LogItem = {
+  id: string;
   email: string;
   message: string;
   status: LogStatus;
+  createdAt: string;
 };
 
 export type CampaignCopy = {
@@ -20,6 +22,8 @@ export type CampaignCopy = {
   cardDescription: string;
   inputLabel: string;
   inputHint: string;
+  delayLabel: string;
+  delayHint: string;
   totalRecipients: string;
   activeEndpoint: string;
   delayWindow: string;
@@ -36,6 +40,13 @@ export type CampaignCopy = {
   liveStatusText: string;
   recipientList: string;
   recipientListText: string;
+  recipientEditorLabel: string;
+  recipientEditorHint: string;
+  recipientEditorPlaceholder: string;
+  parsedRecipients: string;
+  clearHistory: string;
+  historyCleared: string;
+  noRecipients: string;
   batchUnit: string;
   of: string;
   seconds: string;

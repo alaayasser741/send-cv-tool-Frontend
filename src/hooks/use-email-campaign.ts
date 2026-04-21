@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import {
   EMAIL_HTML,
   EMAIL_SUBJECT,
-  SEND_DELAY_MS,
   SEND_ENDPOINT,
 } from "@/config/campaign";
 import { wait } from "@/lib/campaign";
@@ -11,18 +10,21 @@ import type { CampaignCopy, LogItem } from "@/types/campaign";
 
 type UseEmailCampaignArgs = {
   batchSize: number;
+  delaySeconds: number;
   copy: CampaignCopy;
   recipients: string[];
+  prependLogs: (logs: LogItem[]) => void;
 };
 
 export function useEmailCampaign({
   batchSize,
+  delaySeconds,
   copy,
   recipients,
+  prependLogs,
 }: UseEmailCampaignArgs) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [logs, setLogs] = useState<LogItem[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
   const [currentBatch, setCurrentBatch] = useState(0);
 
@@ -33,9 +35,9 @@ export function useEmailCampaign({
 
   const sendEmails = async () => {
     if (loading) return;
+    if (recipients.length === 0) return;
 
     setLoading(true);
-    setLogs([]);
     setProgress(0);
     setCompletedCount(0);
     setCurrentBatch(0);
@@ -63,29 +65,33 @@ export function useEmailCampaign({
             }
 
             return {
+              id: crypto.randomUUID(),
               email,
               message: `${copy.success} ${email}`,
               status: "success" as const,
+              createdAt: new Date().toISOString(),
             };
           } catch (error) {
             const reason = error instanceof Error ? error.message : copy.unknownError;
             return {
+              id: crypto.randomUUID(),
               email,
               message: `${copy.failure}: ${email} (${reason})`,
               status: "error" as const,
+              createdAt: new Date().toISOString(),
             };
           }
         })
       );
 
-      setLogs((current) => [...batchResults, ...current].slice(0, 12));
+      prependLogs(batchResults);
 
       const nextCompletedCount = Math.min(index + batch.length, recipients.length);
       setCompletedCount(nextCompletedCount);
       setProgress(Math.round((nextCompletedCount / recipients.length) * 100));
 
       if (index + batchSize < recipients.length) {
-        await wait(SEND_DELAY_MS);
+        await wait(delaySeconds * 1000);
       }
     }
 
@@ -95,7 +101,6 @@ export function useEmailCampaign({
   return {
     loading,
     progress,
-    logs,
     completedCount,
     currentBatch,
     totalBatches,

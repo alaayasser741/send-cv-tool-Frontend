@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { COOKIE_KEYS, COOKIE_MAX_AGE } from "@/config/cookies";
 import { getCookie, setCookie } from "@/lib/cookies";
-import { clampBatchSize } from "@/lib/campaign";
+import { clampBatchSize, clampDelaySeconds } from "@/lib/campaign";
 import type { Language, Theme } from "@/types/campaign";
 
 export function usePreferences() {
@@ -18,6 +18,9 @@ export function usePreferences() {
 
   const [batchSize, setBatchSize] = useState<number>(() =>
     clampBatchSize(Number(getCookie(COOKIE_KEYS.batchSize) ?? "2"))
+  );
+  const [delaySeconds, setDelaySeconds] = useState<number>(() =>
+    clampDelaySeconds(Number(getCookie(COOKIE_KEYS.delaySeconds) ?? "4"))
   );
 
   useEffect(() => {
@@ -39,6 +42,10 @@ export function usePreferences() {
     setCookie(COOKIE_KEYS.batchSize, String(batchSize), COOKIE_MAX_AGE);
   }, [batchSize]);
 
+  useEffect(() => {
+    setCookie(COOKIE_KEYS.delaySeconds, String(delaySeconds), COOKIE_MAX_AGE);
+  }, [delaySeconds]);
+
   return {
     theme,
     setTheme,
@@ -46,5 +53,7 @@ export function usePreferences() {
     setLanguage,
     batchSize,
     setBatchSize,
+    delaySeconds,
+    setDelaySeconds,
   };
 }
