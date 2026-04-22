@@ -31,6 +31,8 @@ export type CampaignCopy = {
   sending: string;
   progressTitle: string;
   currentBatch: string;
+  nextBatchIn: string;
+  finalBatch: string;
   completed: string;
   batches: string;
   activity: string;

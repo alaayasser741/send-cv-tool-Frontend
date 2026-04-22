@@ -21,6 +21,7 @@ type StatusPanelProps = {
   completedCount: number;
   emailsCount: number;
   currentBatch: number;
+  nextBatchCountdown: number | null;
   totalBatches: number;
   logs: LogItem[];
   onClearHistory: () => void;
@@ -34,6 +35,7 @@ export function StatusPanel({
   completedCount,
   emailsCount,
   currentBatch,
+  nextBatchCountdown,
   totalBatches,
   logs,
   onClearHistory,
@@ -89,9 +91,16 @@ export function StatusPanel({
             </div>
             <div className="rounded-2xl border border-border/60 bg-muted/40 p-4">
               <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                {copy.completed}
+                {nextBatchCountdown !== null ? copy.nextBatchIn : copy.completed}
               </p>
-              <p className="mt-2 text-lg font-semibold">{completedCount}</p>
+              <p className="mt-2 text-lg font-semibold">
+                {nextBatchCountdown !== null
+                  ? `${nextBatchCountdown} ${copy.seconds}`
+                  : completedCount}
+              </p>
+              {loading && nextBatchCountdown === null && currentBatch === totalBatches && totalBatches > 0 ? (
+                <p className="mt-1 text-xs text-muted-foreground">{copy.finalBatch}</p>
+              ) : null}
             </div>
           </div>
         </div>

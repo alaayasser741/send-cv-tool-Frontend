@@ -36,6 +36,7 @@ export default function App() {
     progress,
     completedCount,
     currentBatch,
+    nextBatchCountdown,
     totalBatches,
     sendEmails,
   } = useEmailCampaign({
@@ -103,6 +104,7 @@ export default function App() {
             completedCount={completedCount}
             emailsCount={recipients.length}
             currentBatch={currentBatch}
+            nextBatchCountdown={nextBatchCountdown}
             totalBatches={totalBatches}
             logs={logs}
             onClearHistory={clearLogs}

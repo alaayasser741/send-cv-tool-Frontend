@@ -27,6 +27,7 @@ export function useEmailCampaign({
   const [progress, setProgress] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [currentBatch, setCurrentBatch] = useState(0);
+  const [nextBatchCountdown, setNextBatchCountdown] = useState<number | null>(null);
 
   const totalBatches = useMemo(
     () => Math.ceil(recipients.length / batchSize),
@@ -41,6 +42,7 @@ export function useEmailCampaign({
     setProgress(0);
     setCompletedCount(0);
     setCurrentBatch(0);
+    setNextBatchCountdown(null);
 
     for (let index = 0; index < recipients.length; index += batchSize) {
       const batch = recipients.slice(index, index + batchSize);
@@ -91,11 +93,33 @@ export function useEmailCampaign({
       setProgress(Math.round((nextCompletedCount / recipients.length) * 100));
 
       if (index + batchSize < recipients.length) {
-        await wait(delaySeconds * 1000);
+        if (delaySeconds > 0) {
+          setNextBatchCountdown(delaySeconds);
+
+          await new Promise<void>((resolve) => {
+            let remainingSeconds = delaySeconds;
+
+            const intervalId = window.setInterval(() => {
+              remainingSeconds -= 1;
+
+              if (remainingSeconds <= 0) {
+                window.clearInterval(intervalId);
+                setNextBatchCountdown(null);
+                resolve();
+                return;
+              }
+
+              setNextBatchCountdown(remainingSeconds);
+            }, 1000);
+          });
+        } else {
+          await wait(0);
+        }
       }
     }
 
     setLoading(false);
+    setNextBatchCountdown(null);
   };
 
   return {
@@ -103,6 +127,7 @@ export function useEmailCampaign({
     progress,
     completedCount,
     currentBatch,
+    nextBatchCountdown,
     totalBatches,
     sendEmails,
   };

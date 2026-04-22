@@ -19,6 +19,8 @@
   "sending": "جاري الإرسال...",
   "progressTitle": "تقدم الإرسال",
   "currentBatch": "الدفعة الحالية",
+  "nextBatchIn": "الدفعة التالية خلال",
+  "finalBatch": "جاري تنفيذ الدفعة الأخيرة",
   "completed": "تم التنفيذ",
   "batches": "الدفعات",
   "activity": "آخر العمليات",

@@ -19,6 +19,8 @@
   "sending": "Sending...",
   "progressTitle": "Delivery progress",
   "currentBatch": "Current batch",
+  "nextBatchIn": "Next batch in",
+  "finalBatch": "Final batch running",
   "completed": "Completed",
   "batches": "Batches",
   "activity": "Recent activity",
